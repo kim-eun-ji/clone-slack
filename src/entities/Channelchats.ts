@@ -1,51 +1,49 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
-  OneToMany,
-} from "typeorm";
-import { Channels } from "./Channels";
-import { Users } from "./Users";
-import { Mentions } from "./Mentions";
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Users } from './Users';
+import { Channels } from './Channels';
 
-@Index("FK_channels_TO_channelchats_1", ["channelId"], {})
-@Index("FK_users_TO_channelchats_1", ["userId"], {})
-@Entity("channelchats", { schema: "slack" })
-export class Channelchats {
-  @Column("int", { primary: true, name: "id" })
+@Index('UserId', ['UserId'], {})
+@Index('ChannelId', ['ChannelId'], {})
+@Entity({ schema: 'sleact', name: 'channelchats' })
+export class ChannelChats {
+  @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 
-  @Column("int", { primary: true, name: "ChannelId" })
-  channelId: number;
-
-  @Column("int", { primary: true, name: "UserId" })
-  userId: number;
-
-  @Column("text", { name: "content" })
+  @Column('text', { name: 'content' })
   content: string;
 
-  @Column("datetime", { name: "updatedAt", default: () => "CURRENT_TIMESTAMP" })
-  updatedAt: Date;
-
-  @Column("datetime", { name: "createdAt", default: () => "CURRENT_TIMESTAMP" })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => Channels, (channels) => channels.channelchats, {
-    onDelete: "NO ACTION",
-    onUpdate: "NO ACTION",
-  })
-  @JoinColumn([{ name: "ChannelId", referencedColumnName: "id" }])
-  channel: Channels;
+  @UpdateDateColumn()
+  updatedAt: Date;
 
-  @ManyToOne(() => Users, (users) => users.channelchats, {
-    onDelete: "NO ACTION",
-    onUpdate: "NO ACTION",
-  })
-  @JoinColumn([{ name: "UserId", referencedColumnName: "id" }])
-  user: Users;
+  @Column('int', { name: 'UserId', nullable: true })
+  UserId: number | null;
 
-  @OneToMany(() => Mentions, (mentions) => mentions.chat)
-  mentions: Mentions[];
+  @Column('int', { name: 'ChannelId', nullable: true })
+  ChannelId: number | null;
+
+  @ManyToOne(() => Users, (users) => users.ChannelChats, {
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
+  User: Users;
+
+  @ManyToOne(() => Channels, (channels) => channels.ChannelChats, {
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn([{ name: 'ChannelId', referencedColumnName: 'id' }])
+  Channel: Channels;
 }

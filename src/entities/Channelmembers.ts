@@ -1,33 +1,41 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
-import { Channels } from "./Channels";
-import { Users } from "./Users";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Channels } from './Channels';
+import { Users } from './Users';
 
-@Index("FK_channels_TO_channelmembers_1", ["channelId"], {})
-@Entity("channelmembers", { schema: "slack" })
-export class Channelmembers {
-  @Column("int", { primary: true, name: "UserId" })
-  userId: number;
-
-  @Column("int", { primary: true, name: "ChannelId" })
-  channelId: number;
-
-  @Column("datetime", { name: "createdAt", default: () => "CURRENT_TIMESTAMP" })
+@Index('UserId', ['UserId'], {})
+@Entity({ schema: 'sleact', name: 'channelmembers' })
+export class ChannelMembers {
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column("datetime", { name: "updatedAt", default: () => "CURRENT_TIMESTAMP" })
+  @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Channels, (channels) => channels.channelmembers, {
-    onDelete: "NO ACTION",
-    onUpdate: "NO ACTION",
-  })
-  @JoinColumn([{ name: "ChannelId", referencedColumnName: "id" }])
-  channel: Channels;
+  @Column('int', { primary: true, name: 'ChannelId' })
+  ChannelId: number;
 
-  @ManyToOne(() => Users, (users) => users.channelmembers, {
-    onDelete: "NO ACTION",
-    onUpdate: "NO ACTION",
+  @Column('int', { primary: true, name: 'UserId' })
+  UserId: number;
+
+  @ManyToOne(() => Channels, (channels) => channels.ChannelMembers, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
-  @JoinColumn([{ name: "UserId", referencedColumnName: "id" }])
-  user: Users;
+  @JoinColumn([{ name: 'ChannelId', referencedColumnName: 'id' }])
+  Channel: Channels;
+
+  @ManyToOne(() => Users, (users) => users.ChannelMembers, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
+  User: Users;
 }

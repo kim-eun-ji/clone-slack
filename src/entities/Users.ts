@@ -1,58 +1,99 @@
-import { Column, Entity, OneToMany } from "typeorm";
-import { Channelchats } from "./Channelchats";
-import { Channelmembers } from "./Channelmembers";
-import { Dms } from "./Dms";
-import { Mentions } from "./Mentions";
-import { Workspacemembers } from "./Workspacemembers";
-import { Workspaces } from "./Workspaces";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  Index,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { ChannelChats } from './ChannelChats';
+import { ChannelMembers } from './ChannelMembers';
+import { Channels } from './Channels';
+import { DMs } from './DMs';
+import { Mentions } from './Mentions';
+import { WorkspaceMembers } from './WorkspaceMembers';
+import { Workspaces } from './Workspaces';
 
-@Entity("users", { schema: "slack" })
+@Index('email', ['email'], { unique: true })
+@Entity({ schema: 'sleact', name: 'users' })
 export class Users {
-  @Column("int", { primary: true, name: "id" })
+  @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
   id: number;
 
-  @Column("varchar", { name: "email", length: 30 })
+  @Column('varchar', { name: 'email', unique: true, length: 30 })
   email: string;
 
-  @Column("varchar", { name: "nickname", length: 30 })
+  @Column('varchar', { name: 'nickname', length: 30 })
   nickname: string;
 
-  @Column("varchar", { name: "password", length: 100 })
+  @Column('varchar', { name: 'password', length: 100, select: false })
   password: string;
 
-  @Column("datetime", { name: "createdAt", default: () => "CURRENT_TIMESTAMP" })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column("datetime", { name: "updatedAt", default: () => "CURRENT_TIMESTAMP" })
+  @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column("datetime", { name: "deletedAt", nullable: true })
+  @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @OneToMany(() => Channelchats, (channelchats) => channelchats.user)
-  channelchats: Channelchats[];
+  @OneToMany(() => ChannelChats, (channelchats) => channelchats.User)
+  ChannelChats: ChannelChats[];
 
-  @OneToMany(() => Channelmembers, (channelmembers) => channelmembers.user)
-  channelmembers: Channelmembers[];
+  @OneToMany(() => ChannelMembers, (channelmembers) => channelmembers.User)
+  ChannelMembers: ChannelMembers[];
 
-  @OneToMany(() => Dms, (dms) => dms.sender)
-  dms: Dms[];
+  @OneToMany(() => DMs, (dms) => dms.Sender)
+  DMs: DMs[];
 
-  @OneToMany(() => Dms, (dms) => dms.receiver)
-  dms2: Dms[];
+  @OneToMany(() => DMs, (dms) => dms.Receiver)
+  DMs2: DMs[];
 
-  @OneToMany(() => Mentions, (mentions) => mentions.sender)
-  mentions: Mentions[];
+  @OneToMany(() => Mentions, (mentions) => mentions.Sender)
+  Mentions: Mentions[];
 
-  @OneToMany(() => Mentions, (mentions) => mentions.receiver)
-  mentions2: Mentions[];
+  @OneToMany(() => Mentions, (mentions) => mentions.Receiver)
+  Mentions2: Mentions[];
 
   @OneToMany(
-    () => Workspacemembers,
-    (workspacemembers) => workspacemembers.user
+    () => WorkspaceMembers,
+    (workspacemembers) => workspacemembers.User,
   )
-  workspacemembers: Workspacemembers[];
+  WorkspaceMembers: WorkspaceMembers[];
 
-  @OneToMany(() => Workspaces, (workspaces) => workspaces.owner)
-  workspaces: Workspaces[];
+  @OneToMany(() => Workspaces, (workspaces) => workspaces.Owner)
+  OwnedWorkspaces: Workspaces[];
+
+  @ManyToMany(() => Workspaces, (workspaces) => workspaces.Members)
+  @JoinTable({
+    name: 'workspacemembers',
+    joinColumn: {
+      name: 'UserId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'WorkspaceId',
+      referencedColumnName: 'id',
+    },
+  })
+  Workspaces: Workspaces[];
+
+  @ManyToMany(() => Channels, (channels) => channels.Members)
+  @JoinTable({
+    name: 'channelmembers',
+    joinColumn: {
+      name: 'UserId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'ChannelId',
+      referencedColumnName: 'id',
+    },
+  })
+  Channels: Channels[];
 }

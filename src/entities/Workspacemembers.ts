@@ -1,36 +1,44 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
-import { Users } from "./Users";
-import { Workspaces } from "./Workspaces";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Workspaces } from './Workspaces';
+import { Users } from './Users';
 
-@Index("FK_workspaces_TO_workspacemembers_1", ["workspaceId"], {})
-@Entity("workspacemembers", { schema: "slack" })
-export class Workspacemembers {
-  @Column("int", { primary: true, name: "UserId" })
-  userId: number;
-
-  @Column("int", { primary: true, name: "WorkspaceId" })
-  workspaceId: number;
-
-  @Column("datetime", { name: "createdAt", default: () => "CURRENT_TIMESTAMP" })
+@Index('UserId', ['UserId'], {})
+@Entity('workspacemembers', { schema: 'sleact' })
+export class WorkspaceMembers {
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column("datetime", { name: "updatedAt", default: () => "CURRENT_TIMESTAMP" })
+  @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column("datetime", { name: "loggedInAt", nullable: true })
+  @Column('int', { primary: true, name: 'WorkspaceId' })
+  WorkspaceId: number;
+
+  @Column('int', { primary: true, name: 'UserId' })
+  UserId: number;
+
+  @Column('datetime', { name: 'loggedInAt', nullable: true })
   loggedInAt: Date | null;
 
-  @ManyToOne(() => Users, (users) => users.workspacemembers, {
-    onDelete: "NO ACTION",
-    onUpdate: "NO ACTION",
+  @ManyToOne(() => Workspaces, (workspaces) => workspaces.WorkspaceMembers, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
-  @JoinColumn([{ name: "UserId", referencedColumnName: "id" }])
-  user: Users;
+  @JoinColumn([{ name: 'WorkspaceId', referencedColumnName: 'id' }])
+  Workspace: Workspaces;
 
-  @ManyToOne(() => Workspaces, (workspaces) => workspaces.workspacemembers, {
-    onDelete: "NO ACTION",
-    onUpdate: "NO ACTION",
+  @ManyToOne(() => Users, (users) => users.WorkspaceMembers, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
-  @JoinColumn([{ name: "WorkspaceId", referencedColumnName: "id" }])
-  workspace: Workspaces;
+  @JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
+  User: Users;
 }
