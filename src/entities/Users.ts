@@ -37,7 +37,7 @@ export class Users {
   email: string;
 
   @ApiProperty({
-    example: 'qwert101311',
+    example: '보리',
     description: '닉네임',
   })
   @Column('varchar', { name: 'nickname', length: 30 })
@@ -46,6 +46,7 @@ export class Users {
   @ApiProperty({
     example: 'password',
     description: '비밀번호',
+    required: true,
   })
   @Column('varchar', { name: 'password', length: 100, select: false })
   password: string;
