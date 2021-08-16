@@ -37,3 +37,8 @@ lerna-debug.log*
 
 # backup
 /src/entities_origin
+
+# env
+.env
+.env.development
+.env.production
