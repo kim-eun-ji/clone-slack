@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Post, Req, Res, UseInterceptors } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/common/decorator/user.decorator';
 import { UserDto } from 'src/common/dto/user.dto';
@@ -28,8 +28,8 @@ export class UsersController {
 
     @ApiOperation({summary: '회원가입'})
     @Post()
-    postUsers(@Body() data: JoinRequestDto) { 
-        this.usersService.postUsers(data.email, data.nickname, data.password);
+    async join(@Body() data: JoinRequestDto) { 
+        await this.usersService.join(data.email, data.nickname, data.password);
     }
 
     @ApiOkResponse({
