@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/entities/Users';
 import { Repository } from 'typeorm';
@@ -15,19 +15,9 @@ export class UsersService {
     getUser() { }
 
     async join(email: string, nickname: string, password: string) {
-        // 사실 dto단에서 자동으로 체크가능
-        if (!email) {
-            throw new HttpException('이메일은 필수 입력값입니다.', 400);
-        }
-        if (!nickname) {
-            throw new HttpException('닉네임은 필수 입력값입니다.', 400);
-        }
-        if (!password) {
-            throw new HttpException('비밀번호는 필수 입력값입니다.', 400);
-        }
         const user = await this.usersRepository.findOne({ where: { email } });
         if (user) {
-            throw new HttpException('이미 존재하는 사용자입니다.', 401);
+            throw new UnauthorizedException('이미 존재하는 사용자입니다.');
         }
         const hashedPassword = await bcrypt.hash(password, 12);
         await this.usersRepository.save({

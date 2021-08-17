@@ -8,17 +8,23 @@ export class HttpExceptionFilter implements ExceptionFilter{
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
         const status = exception.getStatus();
-        const err = exception.getResponse() as | string | { error: string; statusCode: 400; message: string[] };
+        const err = exception.getResponse() as
+            | { message: any, statusCode: number } // custom
+            | { error: string; statusCode: 400; message: string[] }; // class-validator의 타입
         
-        console.log(status, err);
-        response.status(status).json({ msg: err });
-        // if (typeof err !== 'string' && err.error === 'Bad Request') {
-        //     return response.status(status).json({
-        //         success: false,
-        //         code: status,
-        //         data: err.message,
-        //     });
-        // }
+        if (typeof err !== 'string' && err.statusCode === 400) {
+            return response.status(status).json({
+                success: false,
+                code: status,
+                data: err.message,
+            });
+        }
+
+        response.status(status).json({
+            success: false,
+            code: status,
+            data: err.message,
+        });
 
     }
 
