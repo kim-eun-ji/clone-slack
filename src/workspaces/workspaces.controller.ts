@@ -1,25 +1,24 @@
-import { Controller, Delete, Get, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Delete, Get, Post } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 
-@ApiTags('WORKSPACE')
-@Controller('api/workspaces')
+@ApiTags("WORKSPACE")
+@Controller("api/workspaces")
 export class WorkspacesController {
-    @Get()
-    getMyWorkspaces() { }
+  @Get()
+  getMyWorkspaces() {}
 
-    @Post()
-    createWorkspace() { }
+  @Post()
+  createWorkspace() {}
 
-    @Get(':url/members')
-    getAllMembersFromWorkspace() { }
+  @Get(":url/members")
+  getAllMembersFromWorkspace() {}
 
-    @Post(':url/member')
-    inviteMembersToWorkspace() { }
+  @Post(":url/member")
+  inviteMembersToWorkspace() {}
 
-    @Delete(':url/members/:id')
-    kickMemberFromWorkspace() { }
+  @Delete(":url/members/:id")
+  kickMemberFromWorkspace() {}
 
-    @Get(':url/members/:id')
-    getMemberInfoInWorkspace() { }
-
+  @Get(":url/members/:id")
+  getMemberInfoInWorkspace() {}
 }

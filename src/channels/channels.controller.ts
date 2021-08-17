@@ -1,30 +1,30 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Query } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 
-@ApiTags('CHANNEL')
-@Controller('api/workspaces/:url/channels')
+@ApiTags("CHANNEL")
+@Controller("api/workspaces/:url/channels")
 export class ChannelsController {
-    @Get()
-    getAllChannels() { }
-    
-    @Post()
-    createChannels() { }
+  @Get()
+  getAllChannels() {}
 
-    @Get(':name')
-    getSpecificChannel() { }
+  @Post()
+  createChannels() {}
 
-    @Get(':name/chats')
-    getChats(@Query() query, @Param() param) { 
-        console.log(query.perPage, query.page);
-        console.log(param.id, param.url);
-    }
-    
-    @Post(':name/chats')
-    postChat(@Body() body) { }
+  @Get(":name")
+  getSpecificChannel() {}
 
-    @Get(':name/menbers')
-    getAllMembers() { }
+  @Get(":name/chats")
+  getChats(@Query() query, @Param() param) {
+    console.log(query.perPage, query.page);
+    console.log(param.id, param.url);
+  }
 
-    @Post(':name/menbers')
-    inviteMembers() { }
+  @Post(":name/chats")
+  postChat(@Body() body) {}
+
+  @Get(":name/menbers")
+  getAllMembers() {}
+
+  @Post(":name/menbers")
+  inviteMembers() {}
 }
