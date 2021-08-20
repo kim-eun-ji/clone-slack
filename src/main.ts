@@ -3,6 +3,7 @@ import { NestFactory } from "@nestjs/core";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
 import { HttpExceptionFilter } from "./httpException.filter";
+import passport from "passport";
 
 declare const module: any;
 
@@ -20,7 +21,9 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document);
-
+  // app.use(cookieParser());
+  app.use(passport.initialize());
+  app.use(passport.session());
   await app.listen(port);
 
   console.log(`listening on port ${port}`);

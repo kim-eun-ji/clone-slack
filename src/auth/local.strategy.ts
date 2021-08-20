@@ -14,6 +14,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new UnauthorizedException();
     }
+    // validate되는 순간(done) serializeUser 호출해 세션에 id 저장
     return done(null, user);
   }
 }
