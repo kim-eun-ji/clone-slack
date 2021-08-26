@@ -66,6 +66,8 @@ export class Users {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
+  // --- 관계들은 처음부터 생성한다기보단, 그때그때 필요할 때(join등..) 추가하며 진행한다.
+
   @OneToMany(() => ChannelChats, channelchats => channelchats.User)
   ChannelChats: ChannelChats[];
 
