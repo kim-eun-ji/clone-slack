@@ -67,4 +67,43 @@ export class WorkspacesService {
     // getRawMany는 조인시 같은 이름의 컬럼이 있다면 id. wm.id 이런식으로 가져오는데
     // getMany는 {id, name ... workspace:{id, name} 이렇게 객체로 가져옴
   }
+
+  async createWorkspaceMembers(url: string, email: string) {
+    // 동일. 앞으론 웬만하면 쿼리빌더 형식으로 쓰는 걸 고려
+    // const workspace = await this.workspacesRepository.createQueryBuilder('workspace').innerJoinAndSelect('workspace.Channels', 'channels').getOne()
+    const workspace = await this.workspacesRepository.findOne({
+      where: { url },
+      // join 대신 가능
+      // relations: ['Channels'],
+      join: {
+        alias: "workspace",
+        innerJoinAndSelect: {
+          channels: "workspace.Channels"
+        }
+      }
+    });
+
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user) {
+      return null;
+    }
+
+    const workspaceMember = new WorkspaceMembers();
+    workspaceMember.UserId = user.id;
+    workspaceMember.WorkspaceId = workspace.id;
+    await this.workspaceMembersRepository.save(workspaceMember);
+
+    const channelMember = new ChannelMembers();
+    channelMember.ChannelId = workspace.Channels.find(v => v.name === "일반").id;
+    channelMember.UserId = user.id;
+    await this.channelMembersRepository.save(channelMember);
+  }
+
+  async getWorkspaceMember(url: string, id: number) {
+    return this.usersRepository
+      .createQueryBuilder("user")
+      .where("user.id = :id", { id })
+      .innerJoin("user.Workspace", "workspace", "workspace.url = :url", { url })
+      .getOne();
+  }
 }
