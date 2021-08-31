@@ -45,10 +45,13 @@ export class ChannelsService {
   }
 
   async getWorkspaceChannel(url: string, name: string) {
-    return this.channelsRepository.findOne({
-      where: { name },
-      relations: ["Workspace"]
-    });
+    return this.channelsRepository
+      .createQueryBuilder("channel")
+      .innerJoin("channel.Workspace", "workspace", "workspace.url = :url", {
+        url
+      })
+      .where("channel.name = :name", { name })
+      .getOne();
   }
 
   async createWorkspaceChannels(url: string, name: string, myId: number) {
@@ -137,7 +140,7 @@ export class ChannelsService {
   }
 
   // 읽지 않은 메시지 개수
-  async getChannelUnreadsCount(url: string, name: string, after: string) {
+  async getChannelUnreadsCount(url: string, name: string, after: number) {
     const channel = await this.channelsRepository
       .createQueryBuilder("channel")
       .innerJoin("channel.Workspace", "workspace", "workspace.url = :url", {
