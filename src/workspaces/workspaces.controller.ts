@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { User } from "src/common/decorator/user.decorator";
 import { Users } from "src/entities/Users";
@@ -17,11 +17,17 @@ export class WorkspacesController {
 
   @Post()
   createWorkspace(@User() user: Users, @Body() body: CreateWorkspaceDto) {
-    return this.WorkspacesService.createWorkspace(body.workspace, body.url, user.id);
+    return this.WorkspacesService.createWorkspace(
+      body.workspace,
+      body.url,
+      user.id
+    );
   }
 
   @Get(":url/members")
-  getAllMembersFromWorkspace() {}
+  getAllMembersFromWorkspace(@Param("url") url: string) {
+    return this.WorkspacesService.getWorkspaceMembers(url);
+  }
 
   @Post(":url/member")
   inviteMembersToWorkspace() {}
