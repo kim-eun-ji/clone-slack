@@ -5,6 +5,7 @@ import { ChannelMembers } from "src/entities/ChannelMembers";
 import { Channels } from "src/entities/Channels";
 import { Users } from "src/entities/Users";
 import { Workspaces } from "src/entities/Workspaces";
+import { EventsGateway } from "src/events/events.gateway";
 import { MoreThan, Repository } from "typeorm";
 
 @Injectable()
@@ -19,7 +20,8 @@ export class ChannelsService {
     @InjectRepository(ChannelChats)
     private channelChatsRepository: Repository<ChannelChats>,
     @InjectRepository(Users)
-    private usersRepository: Repository<Users>
+    private usersRepository: Repository<Users>,
+    private eventsGateway: EventsGateway
   ) {}
 
   async findById(id: number) {
@@ -157,7 +159,36 @@ export class ChannelsService {
     });
   }
 
-  async createWorkspaceChannelChats() {}
+  // async createWorkspaceChannelChats() {}
+  async postChat({ url, name, content, myId }) {
+    const channel = await this.channelsRepository
+      .createQueryBuilder("channel")
+      .innerJoin("channel.Workspace", "workspace", "workspace.url = :url", {
+        url
+      })
+      .where("channel.name = :name", { name })
+      .getOne();
+    if (!channel) {
+      throw new NotFoundException("채널이 존재하지 않습니다.");
+    }
+
+    const chats = new ChannelChats();
+    chats.content = content;
+    chats.UserId = myId;
+    chats.ChannelId = channel.id;
+
+    const savedChat = await this.channelsRepository.save(chats);
+    const chatWithUser = await this.channelChatsRepository.findOne({
+      where: { id: savedChat.id },
+      relations: ["User", "Channel"]
+    });
+
+    // socket.io로 워크스페이스+채널 사용자에게 전송
+    // ws-워크스페이스명-채널아이디 형식. (socketio의 room에 해당)
+    this.eventsGateway.server
+      .to(`/ws-${url}-${channel.id}}`)
+      .emit("message", chatWithUser);
+  }
 
   async createWorkspaceChannelImages() {}
 }

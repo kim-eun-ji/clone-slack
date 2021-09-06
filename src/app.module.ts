@@ -10,6 +10,7 @@ import { DmsModule } from "./dms/dms.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import * as ormconfig from "../ormconfig";
 import { AuthModule } from "./auth/auth.module";
+import { EventsModule } from "./events/events.module";
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { AuthModule } from "./auth/auth.module";
     WorkspacesModule,
     ChannelsModule,
     DmsModule,
-    TypeOrmModule.forRoot(ormconfig)
+    TypeOrmModule.forRoot(ormconfig),
+    EventsModule
   ],
   controllers: [AppController],
   providers: [AppService]
