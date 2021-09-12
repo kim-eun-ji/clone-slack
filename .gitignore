@@ -38,6 +38,9 @@ lerna-debug.log*
 # backup
 /src/entities_origin
 
+# TypeOrm
+output/
+
 # env
 .env
 .env.development
