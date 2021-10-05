@@ -44,4 +44,11 @@ export class UsersService {
     });
     return true;
   }
+
+  async findByEmail(email: string) {
+    return this.usersRepository.findOne({
+      where: { email },
+      select: ["id", "email", "password"]
+    });
+  }
 }
